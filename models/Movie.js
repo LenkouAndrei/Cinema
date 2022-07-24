@@ -1,6 +1,6 @@
 const mongoose = require("mongoose");
 
-const cinemaSchema = mongoose.Schema({
+const movieSchema = mongoose.Schema({
 	title: String,
 	tagline: String,
 	vote_average: Number,
@@ -14,4 +14,4 @@ const cinemaSchema = mongoose.Schema({
 	runtime: Number
 });
 
-module.exports = mongoose.model("Cinema", cinemaSchema);
+module.exports = mongoose.model("Movie", movieSchema);
