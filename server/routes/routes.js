@@ -1,6 +1,6 @@
 const express = require("express");
 const router = express.Router();
-const MoviesCtrl = require('../controllers/movie.controll');
+const MoviesCtrl = require('../controllers/movie.controll.js');
 
 router.get("/movies", MoviesCtrl.getAllMovies);
 router.post("/movies", MoviesCtrl.addMovie);
