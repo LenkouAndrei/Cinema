@@ -1,13 +1,44 @@
 const MovieModel = require("../models/Movie");
+const CountryModel = require("../models/Country");
+const GenreModel = require("../models/Genre");
+const ProducerModel = require("../models/Producer");
+const RateMpAAModel = require("../models/RateMpAA");
+
+const getGenre = async(genreId) => {
+    const { name } = await GenreModel.findOne({ _id: genreId }, { name: 1 });
+    return name;
+};
+
+const getProducer = async(producerId) => {
+    const { name } =  await ProducerModel.findOne({ _id: producerId }, { name: 1 });
+    return name;
+};
+
+const getCountry = async(countryId) => {
+    const { name } =  await CountryModel.findOne({ _id: countryId }, { name: 1 });
+    return name;
+};
+
+const getRateMpAA = async(rateMpAAId) => {
+    const { name, ageLimit } =  await RateMpAAModel.findOne({ _id: rateMpAAId }, { name: 1, ageLimit: 1 });
+    return { name, ageLimit };
+};
+
+const updateFields = async(movie) => {
+    movie.genres = await Promise.all(movie.genres.map(getGenre));
+    movie.producers = await Promise.all(movie.producers.map(getProducer));
+    movie.countries = await Promise.all(movie.countries.map(getCountry));
+    const rateMpAA = await getRateMpAA(movie.rateMpAA); // TODO: made a correct view
+    delete movie._doc.rateMpAA
+    return { ...movie._doc, rateMpAA };
+};
 
 const getAllMovies = async(req, res) => {
     try {
-        const query = req.querry;
-        const movie = await MovieModel.find(query)
-            .sort(req.sortCondition)
-            .skip(req.skip || 0)
-            .limit(req.limit || 50);
-        res.send(movie);
+        const { skip = 0, limit = 5, sortField = 'release_date', sortOrder = 1 } = req.query;
+        const movies = await MovieModel.find({}).sort({ [sortField]: +sortOrder }).skip(+skip).limit(+limit);
+        const updatedMovies = await Promise.all(movies.map(updateFields));
+        res.send(updatedMovies);
     } catch(error) {
         console.log(error);
         res.sendStatus(500);
@@ -32,7 +63,7 @@ const addMovie = async(req, res) => {
 
 const getMovieById = async(req, res) => {
     try {
-        const movie = await MovieModel.findOne({ _id: req.params.id });
+        const movie = await MovieModel.findOne({ _id: req.params.id }).lean();
         res.send(movie);
     } catch(error) {
         console.log(error);
