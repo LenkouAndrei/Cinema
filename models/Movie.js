@@ -11,7 +11,10 @@ const movieSchema = mongoose.Schema({
 	budget: Number,
 	revenue: Number,
 	genres: { type : Array },
-	runtime: Number
+	runtime: Number,
+	producers: { type: Array },
+	countries: { type: Array },
+	rateMpAA: String,
 });
 
 module.exports = mongoose.model("Movie", movieSchema);
