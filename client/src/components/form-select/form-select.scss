@@ -1,0 +1,43 @@
+@import "../../styles/colors-vars";
+
+.form-select {
+    &__list,
+    &__btn {
+        padding: 5px 15px;
+        font-size: 15px;
+        background-color: $grey;
+        color: $grey-font-color;
+    }
+
+    &__list {
+        position: absolute;
+        left: 0;
+        right: 0;
+        z-index: 100;
+        height: 150px;
+        overflow-y: auto;
+        border-bottom: 1px solid $grey-border-color;
+    }
+
+    &__btn {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        width: 100%;
+        border: 1px solid $grey-border-color;
+    }
+
+    &__icon {
+        color: $solmon;
+    }
+
+    &__item {
+        padding: 5px 0;
+    }
+
+    &__label {
+        display: inline-block;
+        width: 100%;
+        cursor: pointer;
+    }
+}

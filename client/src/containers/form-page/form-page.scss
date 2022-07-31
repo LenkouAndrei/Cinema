@@ -1,0 +1,95 @@
+@import "../../styles/colors-vars";
+
+.form {
+    width: 100%;
+    padding: 0 30px;
+    box-sizing: border-box;
+
+    &__btn {
+        &--close,
+        &--reset {
+            background-color: transparent;
+        }
+
+        &--close {
+            align-self: flex-end;
+        }
+
+        &--reset,
+        &--save {
+            border: 1px solid $solmon;
+            border-radius: 2px;
+            padding: 5px 15px;
+            text-transform: uppercase;
+            font-size: 15px;
+        }
+
+        &--reset {
+            color: $solmon;
+        }
+
+        &--save {
+            margin-left: 5px;
+            color: $grey-font-color;
+            background-color: $solmon;
+        }
+    }
+
+    &__btn-wrapper,
+    &__field-wrapper {
+        margin-top: 15px;
+    }
+
+    &__btn-wrapper {
+        display: flex;
+        justify-content: flex-end;
+    }
+
+    &__icon {
+        color: $grey-font-color;
+
+        &--bright {
+            color: $solmon;
+            position: absolute;
+            top: 50%;
+            right: 15px;
+            transform: rotateY(-50%);
+        }
+    }
+
+    &__headline {
+        text-transform: uppercase;
+        font-size: 25px;
+    }
+
+    &__field-wrapper {
+        position: relative;
+    }
+
+    &__title,
+    &__label {
+        margin-bottom: 5px;
+        text-transform: uppercase;
+        color: $solmon;
+    }
+
+    &__label {
+        display: block;
+    }
+
+    &__text,
+    &__input {
+        padding: 5px 0;
+        color: $grey-font-color;
+    }
+
+    &__input {
+        width: 100%;
+        padding: 5px 15px;
+        background-color: $grey;
+        border-color: $grey-border-color;
+        color: $grey-font-color;
+        font-size: 15px;
+        box-sizing: border-box;
+    }
+}
