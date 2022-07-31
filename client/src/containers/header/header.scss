@@ -1,0 +1,27 @@
+@import "../../styles/colors-vars";
+
+.header {
+    padding: 10px 0;
+    background-color: $black;
+
+    &__top {
+        display: flex;
+        justify-content: space-between;
+    }
+
+    .add,
+    .search {
+        &-btn {
+            padding: 5px 10px;
+            text-transform: uppercase;
+            color: $solmon;
+            background-color: $white-opacity-3;
+            font-size: 18px;
+            font-weight: 600;
+
+            &:hover {
+                cursor: pointer;
+            }
+        }
+    }
+}
