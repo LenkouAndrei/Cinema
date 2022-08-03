@@ -10,6 +10,7 @@ import {
 } from '../../types/types';
 import './main.scss';
 import { moviesSortList } from './mockMoviesSortList';
+import { movieService } from '../../services/movie.service';
 
 const defaultMovies: IMovie[] = require('../../data.json');
 const blockName = 'result';
@@ -28,18 +29,25 @@ type TUpdateMovieSet = (editableMovie: IMovie) => void;
 type TUpdateMoviesSortConfig = (isOpen: boolean, title?: TSortListItem) => void;
 type TSortMoviesByField = (field: keyof IMovie) => void;
 type TShowDetails = (event: MouseEvent, movieWithDetails: IMovie) => void;
+interface IResponseGenre {
+    name: TGenresListItem;
+}
+
+const defaultGenre: IResponseGenre = { name: 'All' };
 
 export function Main(props: IMainProps): JSX.Element {
-    const allMoviesGenres: TGenresListItem[] =
-        defaultMovies.reduce(
-            (allGenres: TGenresListItem[], { genres }: IMovie) => {
-                allGenres.push(...genres as TGenresListItem[]);
-                return allGenres;
-            },
-            ['All']
-        );
+    useEffect(() => {
+        movieService.getGenres()
+            .then(responseGenres => {
+                const genres: TGenresListItem[] = [defaultGenre, ...responseGenres].map(({ name }: IResponseGenre) => name);
+                setMoviesGenresConfig({
+                    genres,
+                    currentGenre: genres[0]
+                })
+            })
+    }, []);
 
-    const moviesGenres: TGenresListItem[] = Array.from(new Set(allMoviesGenres));
+
     const initGreatestId: number = defaultMovies.reduce(
         (accum: number, curr: IMovie) => {
             return curr.id > accum ? curr.id : accum;
@@ -59,13 +67,20 @@ export function Main(props: IMainProps): JSX.Element {
         options: moviesSortList,
         chosenOption: moviesSortList[0],
     });
-    const [ movies, setMovies ] = useState(defaultMovies);
+    const [ movies, setMovies ] = useState([]);
     const [ moviesGenresConfig, setMoviesGenresConfig ] = useState({
-        genres: moviesGenres,
-        currentGenre: moviesGenres[0],
+        genres: [defaultGenre.name],
+        currentGenre: defaultGenre.name
     });
     const [ greatestId, setGreatestId ] = useState(initGreatestId);
     const [ movieWithDetails, setMovieWithDetails ] = useState(null);
+
+
+    useEffect(() => {
+        console.log('moviesGenresConfig.currentGenre: ', moviesGenresConfig.currentGenre);
+        movieService.getMovies()
+            .then(setMovies);
+    }, [moviesGenresConfig.currentGenre]);
 
     useEffect(
         () => {

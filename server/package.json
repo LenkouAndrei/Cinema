@@ -19,7 +19,9 @@
   },
   "homepage": "https://github.com/LenkouAndrei/Cinema#readme",
   "dependencies": {
+    "cors": "^2.8.5",
     "express": "4.17.1",
+    "kcors": "^2.2.2",
     "mongoose": "5.10.0"
   }
 }

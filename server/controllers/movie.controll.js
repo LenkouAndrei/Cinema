@@ -38,7 +38,7 @@ const getAllMovies = async(req, res) => {
         const { skip = 0, limit = 5, sortField = 'release_date', sortOrder = 1 } = req.query;
         const movies = await MovieModel.find({}).sort({ [sortField]: +sortOrder }).skip(+skip).limit(+limit);
         const updatedMovies = await Promise.all(movies.map(updateFields));
-        res.send(updatedMovies);
+        res.json(updatedMovies);
     } catch(error) {
         console.log(error);
         res.sendStatus(500);
