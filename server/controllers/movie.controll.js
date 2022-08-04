@@ -4,6 +4,9 @@ const GenreModel = require("../models/Genre");
 const ProducerModel = require("../models/Producer");
 const RateMpAAModel = require("../models/RateMpAA");
 
+const mongoose = require('mongoose');
+const ObjectId = mongoose.Types.ObjectId;
+
 const getGenre = async(genreId) => {
     const { name } = await GenreModel.findOne({ _id: genreId }, { name: 1 });
     return name;
@@ -29,14 +32,18 @@ const updateFields = async(movie) => {
     movie.producers = await Promise.all(movie.producers.map(getProducer));
     movie.countries = await Promise.all(movie.countries.map(getCountry));
     const rateMpAA = await getRateMpAA(movie.rateMpAA); // TODO: made a correct view
-    delete movie._doc.rateMpAA
-    return { ...movie._doc, rateMpAA };
+    delete movie.rateMpAA
+    return { ...movie, rateMpAA };
 };
 
 const getAllMovies = async(req, res) => {
     try {
-        const { skip = 0, limit = 5, sortField = 'release_date', sortOrder = 1 } = req.query;
-        const movies = await MovieModel.find({}).sort({ [sortField]: +sortOrder }).skip(+skip).limit(+limit);
+        const { skip = 0, limit = 5, sortField = 'release_date', sortOrder = 1, genreId = null, searchText = '' } = req.query;
+        const searchQuery = { title: { $regex: searchText, $options: "i" } };
+        if (genreId) {
+            searchQuery.genres = ObjectId(genreId);
+        }
+        const movies = await MovieModel.find(searchQuery).sort({ [sortField]: +sortOrder }).skip(+skip).limit(+limit).lean();
         const updatedMovies = await Promise.all(movies.map(updateFields));
         res.json(updatedMovies);
     } catch(error) {

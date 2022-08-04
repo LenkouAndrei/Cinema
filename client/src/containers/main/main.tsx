@@ -1,10 +1,10 @@
-import React, { MouseEvent, useCallback, useEffect, useState } from 'react';
+import React, { MouseEvent, useCallback, useEffect, useState, ChangeEvent } from 'react';
 import { FormPage, Modal, Wrapper } from '../';
 import { DeleteModal, Details, MovieCard, ResultFilter, ResultSort, Search } from '../../components';
 import {
     IMovie,
     ISelectConfig,
-    TGenresListItem,
+    IGenresListItem,
     TNullable,
     TSortListItem
 } from '../../types/types';
@@ -14,6 +14,7 @@ import { movieService } from '../../services/movie.service';
 
 const defaultMovies: IMovie[] = require('../../data.json');
 const blockName = 'result';
+let searchText = '';
 
 interface IMainProps {
     movieToAdd: TNullable<IMovie>;
@@ -24,22 +25,27 @@ interface IMainProps {
 type TVoidWithNoArgs = () => void;
 type TShowModal = (modalType: string) => void;
 type THandleMovie = (modalDialogType: string, id: number) => void;
-type TSetGenre = (genre: TGenresListItem) => void;
+type TSetGenre = (genre: IGenresListItem) => void;
 type TUpdateMovieSet = (editableMovie: IMovie) => void;
 type TUpdateMoviesSortConfig = (isOpen: boolean, title?: TSortListItem) => void;
 type TSortMoviesByField = (field: keyof IMovie) => void;
 type TShowDetails = (event: MouseEvent, movieWithDetails: IMovie) => void;
-interface IResponseGenre {
-    name: TGenresListItem;
-}
 
-const defaultGenre: IResponseGenre = { name: 'All' };
+const defaultGenre: IGenresListItem = {
+    name: 'All',
+    id: null
+};
+
+interface IResponseGenre {
+    name: string;
+    _id: string;
+}
 
 export function Main(props: IMainProps): JSX.Element {
     useEffect(() => {
         movieService.getGenres()
             .then(responseGenres => {
-                const genres: TGenresListItem[] = [defaultGenre, ...responseGenres].map(({ name }: IResponseGenre) => name);
+                const genres: IGenresListItem[] = [defaultGenre, ...responseGenres.map(({ name, _id }: IResponseGenre) => ({ name, id: _id }))];
                 setMoviesGenresConfig({
                     genres,
                     currentGenre: genres[0]
@@ -69,18 +75,20 @@ export function Main(props: IMainProps): JSX.Element {
     });
     const [ movies, setMovies ] = useState([]);
     const [ moviesGenresConfig, setMoviesGenresConfig ] = useState({
-        genres: [defaultGenre.name],
-        currentGenre: defaultGenre.name
+        genres: [defaultGenre],
+        currentGenre: defaultGenre
     });
     const [ greatestId, setGreatestId ] = useState(initGreatestId);
     const [ movieWithDetails, setMovieWithDetails ] = useState(null);
 
 
     useEffect(() => {
-        console.log('moviesGenresConfig.currentGenre: ', moviesGenresConfig.currentGenre);
-        movieService.getMovies()
-            .then(setMovies);
-    }, [moviesGenresConfig.currentGenre]);
+        movieService.getMovies({
+            genreId: moviesGenresConfig.currentGenre.id,
+            sortFieldUI: moviesSortConfig.chosenOption,
+            searchText
+        }).then(setMovies);
+    }, [moviesGenresConfig.currentGenre, moviesSortConfig.chosenOption]);
 
     useEffect(
         () => {
@@ -141,7 +149,7 @@ export function Main(props: IMainProps): JSX.Element {
     };
 
     const setCurrentGenre: TSetGenre = useCallback(
-      (genre: TGenresListItem) => {
+      (genre: IGenresListItem) => {
         setMoviesGenresConfig({
             ...moviesGenresConfig,
             currentGenre: genre,
@@ -164,10 +172,28 @@ export function Main(props: IMainProps): JSX.Element {
         props.onChangePage();
     };
 
+    const findByText = (inputEl: HTMLInputElement) => {
+        return (_event: MouseEvent) => {
+            searchText = inputEl.value;
+            movieService.getMovies({
+                genreId: moviesGenresConfig.currentGenre.id,
+                sortFieldUI: moviesSortConfig.chosenOption,
+                searchText,
+            }).then(setMovies);
+        }
+    }
+
+    const changeSearchText = (event: ChangeEvent<HTMLInputElement>) => {
+        searchText = event.target.value;
+        console.log(searchText);
+    }
+
     const { currentGenre } = moviesGenresConfig;
-    const moviesCards: JSX.Element[] = movies.filter((movie: IMovie) =>  (
-            currentGenre === 'All' || movie.genres.includes(currentGenre))
-        ).map((movie: IMovie) => {
+    const moviesCards: JSX.Element[] = movies
+        .filter((movie: IMovie) =>  {
+            const currentGenreName = currentGenre.name;
+            return currentGenreName === 'All' || movie.genres.includes(currentGenreName)
+        }).map((movie: IMovie) => {
             return <li
                 className={`${blockName}__movies-card`}
                 key={movie.id}
@@ -185,7 +211,8 @@ export function Main(props: IMainProps): JSX.Element {
         </Modal>
         <Wrapper>
             { props.areDetailsVisible && movieWithDetails ?
-                <Details { ...movieWithDetails }/> : <Search/> }
+                <Details { ...movieWithDetails }/>
+                : <Search handleSearch={findByText} handleSearchTextChange={changeSearchText}/> }
         </Wrapper>
         <div className={`${blockName}__separator`} />
         <Wrapper>
