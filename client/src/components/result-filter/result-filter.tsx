@@ -11,8 +11,6 @@ const blockName = 'result-filter';
 type TResultFilter = (props: IResultFilterProps) => JSX.Element;
 
 export const ResultFilter: TResultFilter = ({ genres, currentGenre, onGenreClick }: IResultFilterProps) => {
-    console.log('genres1: ', genres);
-    console.log('currentGenre: ', currentGenre);
     const listItems: JSX.Element[] = genres.map(({ name, id }) => {
         return <li
             className={`${blockName}__item`}

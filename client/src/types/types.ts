@@ -16,6 +16,7 @@ export interface IMovieInfo {
 
 export interface IMovie extends IMovieInfo {
     id?: number;
+    _id?: string;
 }
 
 export interface ISelectConfig {

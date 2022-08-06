@@ -13,39 +13,38 @@ interface IMovieCardProps {
     onClickMovie: (modalDialogType: string, id: number, isOpen: boolean) => void;
 }
 
+const preventAndStop = (event: any) => {
+  event.preventDefault();
+  event.stopPropagation();
+}
+
 export function MovieCard({ movie, onClickMovie }: IMovieCardProps): JSX.Element {
     const [ isEditMenuVisible, setIsEditMenuVisible ] = useState(false);
     const wrapperRef: React.RefObject<HTMLInputElement> = React.createRef();
 
-    const hideEditMenu: () => void = useCallback(
-      () => {
-        setIsEditMenuVisible(false);
-      },
-      []
-    );
+    const hideEditMenu = (event: any) => {
+      preventAndStop(event);
+      setIsEditMenuVisible(false);
+    };
 
-    useOutsideClick(wrapperRef, hideEditMenu);
+    const showEditMenu = (event: any) => {
+      preventAndStop(event);
+      setIsEditMenuVisible(true);
+    };
 
-    const showEditMenu: () => void = useCallback(
-      () => {
-        setIsEditMenuVisible(true);
-      },
-      []
-    );
+    useOutsideClick(wrapperRef, () => { setIsEditMenuVisible(false); });
 
-    const passInfo: (itemTitle: string) => void = useCallback(
-      (itemTitle: string) => {
-        onClickMovie(itemTitle, movie.id, true);
-        hideEditMenu();
-      },
-      []
-    );
+    const handleMenuListItemClick = (itemTitle: string) => (event: any) => {
+      preventAndStop(event);
+      onClickMovie(itemTitle, movie.id, true);
+      setIsEditMenuVisible(false);
+    };
 
-    const listItems: JSX.Element[] = menuItemTitles.map((itemTitle: string) => {
+    const menuListItems: JSX.Element[] = menuItemTitles.map((itemTitle: string) => {
         return <li
             key={itemTitle}
             className={'menu__list-item'}
-            onClick={() => passInfo(itemTitle)}>{ itemTitle }</li>;
+            onClick={handleMenuListItemClick(itemTitle)}>{ itemTitle }</li>;
     });
 
     const menu: JSX.Element = <div
@@ -59,7 +58,7 @@ export function MovieCard({ movie, onClickMovie }: IMovieCardProps): JSX.Element
                 icon={faTimes}/>
         </button>
         <ul className={'menu__list'}>
-            { listItems }
+            { menuListItems }
         </ul>
     </div>;
 
@@ -68,7 +67,8 @@ export function MovieCard({ movie, onClickMovie }: IMovieCardProps): JSX.Element
         onClick={showEditMenu}>
         <FontAwesomeIcon
             className={`${blockName}__icon`}
-            icon={faAlignJustify} />
+            icon={faAlignJustify}
+            onClick={showEditMenu} />
         </div>;
 
     return <figure className={blockName}>

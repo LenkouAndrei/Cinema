@@ -167,8 +167,10 @@ export function Main(props: IMainProps): JSX.Element {
         hideModal();
     };
 
-    const showDetails: TShowDetails = (event: MouseEvent, movie: IMovie) => {
-        setMovieWithDetails( movie );
+    const showDetails = (movie: IMovie) => (event: MouseEvent) => {
+        console.log('Target: ', event.target);
+        movieService.getMovieById(movie._id)
+            .then(setMovieWithDetails);
         props.onChangePage();
     };
 
@@ -197,7 +199,7 @@ export function Main(props: IMainProps): JSX.Element {
             return <li
                 className={`${blockName}__movies-card`}
                 key={movie.id}
-                onClick={(event) => showDetails(event, movie)}>
+                onClick={showDetails(movie)}>
                 <MovieCard onClickMovie={handleMovieToEditChange} movie={movie}/>
             </li>;
         });

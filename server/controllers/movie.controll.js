@@ -71,7 +71,8 @@ const addMovie = async(req, res) => {
 const getMovieById = async(req, res) => {
     try {
         const movie = await MovieModel.findOne({ _id: req.params.id }).lean();
-        res.send(movie);
+        const updatedMovie = await updateFields(movie);
+        res.send(updatedMovie);
     } catch(error) {
         console.log(error);
         res.status(404);

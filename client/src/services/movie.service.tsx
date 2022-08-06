@@ -10,6 +10,8 @@ interface IMovieRequest {
     searchText: string;
 }
 export class MovieService {
+    private readonly moviesUrl = (postfix = '') => `http://localhost:5000/api/movies${postfix}`;
+    private readonly genresUrl = 'http://localhost:5000/api/genres';
     public getMovies({
             skip = 0,
             limit = 5,
@@ -19,12 +21,19 @@ export class MovieService {
             searchText = ''
         }: Partial<IMovieRequest>) {
         const sortField = sortFieldUI.split(' ').join('_');
-        return axios.get('http://localhost:5000/api/movies', {
+        return axios.get(this.moviesUrl(), {
             params: { skip, limit, sortField, sortOrder, genreId, searchText }
         }).then((res) => res.data);
     }
+
+    public getMovieById(movieId: string) {
+        return axios.get(this.moviesUrl(`/${movieId}`), { params: { id: movieId } })
+            .then((res) => res.data);
+    }
+
+
     public getGenres() {
-        return fetch('http://localhost:5000/api/genres')
+        return fetch(this.genresUrl)
             .then((res) => res.json());
     }
 }
