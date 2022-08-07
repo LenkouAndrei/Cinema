@@ -14,5 +14,5 @@ export const defaultMovie: IMovie = {
     runtime: 0,
     countries: [],
     producers: [],
-    rateMpAA: '',
+    rateMpAA: { name: '', ageLimit: 0 },
 };

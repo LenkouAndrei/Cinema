@@ -5,6 +5,7 @@ import { FormPage, Modal, Wrapper } from '../';
 import { faSearch } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import './header.scss';
+import { movieService } from '../../services/movie.service';
 
 export interface IHeaderProps {
     pageName: PageName;
@@ -34,8 +35,10 @@ export function Header({ pageName, onAddBtnClick, onSearchBtnClick }: IHeaderPro
     };
 
     const createNewMovie: TCreateMovie = (newMovie: IMovie) => {
-        onAddBtnClick(newMovie);
-        hideModal();
+        console.log('newMovie: ', newMovie);
+        movieService.addMovie(newMovie)
+            .then(onAddBtnClick)
+            .then(() => { hideModal(); })
     };
 
     const navigateToMainPage: TVoidFunc = () => {

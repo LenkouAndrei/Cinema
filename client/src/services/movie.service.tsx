@@ -41,6 +41,11 @@ export class MovieService {
             })
             .then((res) => res.data)
     }
+
+    public addMovie(movie: IMovie) {
+        return axios.post(this.moviesUrl(), movie)
+            .then((res) => res.data);
+    }
 }
 
 const movieService = new MovieService();

@@ -58,10 +58,36 @@ const getAllMovies = async(req, res) => {
 const addMovie = async(req, res) => {
     try {
         const {
-            title, tagline, vote_average, vote_count, release_date, poster_path, overview, budget, revenue, genres, runtime
+            title,
+            tagline,
+            vote_average,
+            vote_count,
+            release_date,
+            poster_path,
+            overview,
+            budget,
+            revenue,
+            genres,
+            runtime,
+            producers,
+            countries,
+            rateMpAA
         } = req.body;
         const movie = new MovieModel({
-            title, tagline, vote_average, vote_count, release_date, poster_path, overview, budget, revenue, genres, runtime
+            title,
+            tagline,
+            vote_average,
+            vote_count,
+            release_date,
+            poster_path,
+            overview,
+            budget,
+            revenue,
+            genres: genres.map(value => ObjectId(value)),
+            runtime,
+            producers: producers.map(value => ObjectId(value)),
+            countries: countries.map(value => ObjectId(value)),
+            rateMpAA: ObjectId(rateMpAA),
         });
         await movie.save();
         res.send(movie);

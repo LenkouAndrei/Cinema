@@ -48,7 +48,7 @@ export function FormSelect({ appliedItems, allItems, placeholder, multiple = tru
 
     const chosenItemNames = useMemo(() => {
         return selectedItems
-            .map(itemId => allItems.find(({ id }) => itemId === id).name)
+            .map(itemId => allItems.find(({ id }) => itemId === id)?.name)
             .join(', ') || placeholder;
     }, [selectedItems.length, selectedItems[0]])
 

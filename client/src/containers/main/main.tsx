@@ -76,7 +76,6 @@ export function Main(props: IMainProps): JSX.Element {
         genres: [defaultGenre],
         currentGenre: defaultGenre
     });
-    const [ greatestId, setGreatestId ] = useState(initGreatestId);
     const [ movieWithDetails, setMovieWithDetails ] = useState(null);
 
     const setMoviesData = ({ movies, moviesAmount }: { movies: IMovie[], moviesAmount: number }) => {
@@ -98,10 +97,12 @@ export function Main(props: IMainProps): JSX.Element {
             if (!props.movieToAdd) {
                 return;
             }
-            const currentId: number = greatestId + 1;
-            props.movieToAdd.id = currentId;
-            setMovies([ ...movies, props.movieToAdd]);
-            setGreatestId(currentId);
+            movieService.getMovies({
+                genreId: moviesGenresConfig.currentGenre.id,
+                sortFieldUI: moviesSortConfig.chosenOption,
+                searchText,
+                limit: limitPerPage,
+            }).then(setMoviesData);
         },
         [props.movieToAdd]
     );
