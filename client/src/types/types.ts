@@ -1,5 +1,9 @@
 export type TNullable<T> = T | null;
 
+export interface IRateMpAAUIView {
+    name: string;
+    ageLimit: number;
+}
 export interface IMovieInfo {
     title: string;
     tagline: string;
@@ -12,6 +16,9 @@ export interface IMovieInfo {
     revenue: number;
     genres: string[];
     runtime: number;
+    countries: string[];
+    producers: string[];
+    rateMpAA: IRateMpAAUIView | string;
 }
 
 export interface IMovie extends IMovieInfo {

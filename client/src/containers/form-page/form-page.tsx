@@ -1,10 +1,14 @@
-import React, { ChangeEvent, FormEvent, useState } from 'react';
+import React, { ChangeEvent, FormEvent, useEffect, useState } from 'react';
 import { faCalendar } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { FormSelect } from '../../components';
-import { IMovie } from '../../types/types';
+import { IMovie, IGenresListItem, IRateMpAAUIView } from '../../types/types';
 import './form-page.scss';
 import { defaultMovie } from './mockDefaultMovie';
+import { genresService } from '../../services/genres.service';
+import { countriesService } from '../../services/countries.service';
+import { producersService } from '../../services/producers.service';
+import { rateMpAAService } from '../../services/ratesMpAA.service';
 
 interface ISaveChanges {
     movie: IMovie;
@@ -19,10 +23,39 @@ type TResetState = () => void;
 const blockName = 'form';
 
 const url = '';
+let availableGenres: IGenresListItem[];
+let availableCountries: IGenresListItem[];
+let availableProducers: IGenresListItem[];
+let availableRatesMpAA: IGenresListItem[];
 
 export function FormPage({ movie, onSaveChanges }: ISaveChanges): JSX.Element {
-    const startState: IMovie = { ...defaultMovie, ...movie};
-    const [ movieInfo, setMovieInfo ] = useState({ ...defaultMovie, ...movie});
+    const initialState: IMovie = { ...defaultMovie, ...movie};
+    const [ movieInfo, setMovieInfo ] = useState(null);
+
+    const toIdFormat = (genres: IGenresListItem[]) => (genreName: string) => {
+        return genres.find(({ name }) => name === genreName).id;
+    };
+
+    useEffect(() => {
+        Promise.all([
+            genresService.getGenres(),
+            countriesService.getCountries(),
+            producersService.getProducers(),
+            rateMpAAService.getRatesMpAA()
+        ])
+        .then(([genres, countries, producers, ratesMpAA]) => {
+            availableGenres = genres;
+            availableCountries = countries;
+            availableProducers = producers;
+            availableRatesMpAA = ratesMpAA;
+            initialState.genres = initialState.genres.map(toIdFormat(genres));
+            initialState.countries = initialState.countries.map(toIdFormat(countries));
+            initialState.producers = initialState.producers.map(toIdFormat(producers));
+            initialState.rateMpAA = toIdFormat(ratesMpAA)((initialState.rateMpAA as IRateMpAAUIView).name);
+            return initialState;
+        })
+        .then(setMovieInfo);
+    }, []);
 
     const handleChange: THandleChange = ({ target }: ChangeEvent<HTMLInputElement>) => {
         const { name, value } = target;
@@ -37,21 +70,33 @@ export function FormPage({ movie, onSaveChanges }: ISaveChanges): JSX.Element {
         setMovieInfo({ ...movieInfo, genres: newGenres });
     };
 
+    const updateCountries: TUpdateGenres = (newCountries: string[]) => {
+        setMovieInfo({ ...movieInfo, countries: newCountries });
+    };
+
+    const updateProducers: TUpdateGenres = (newProducers: string[]) => {
+        setMovieInfo({ ...movieInfo, producers: newProducers });
+    };
+
+    const updateRateMpAA = (changedRateMpAA: string[]) => {
+        setMovieInfo({ ...movieInfo, rateMpAA: changedRateMpAA[0] });
+    };
+
     const handleSubmit: THandleSubmit = (event: FormEvent) => {
         event.preventDefault();
         onSaveChanges(movieInfo);
     };
 
     const resetState: TResetState = () => {
-        setMovieInfo({ ...startState });
+        setMovieInfo({ ...initialState });
     };
 
-    const movieIdField: JSX.Element | undefined = movieInfo.id && <div className={`${blockName}__field-wrapper`}>
+    const movieIdField: JSX.Element | undefined = movieInfo?.id && <div className={`${blockName}__field-wrapper`}>
         <div className={`${blockName}__title`}>movie id</div>
         <div className={`${blockName}__text`}>{movieInfo.id}</div>
     </div>;
 
-    return <form
+    return movieInfo && <form
         className={blockName}
         onSubmit={handleSubmit}>
         <h2 className={`${blockName}__headline`}>Edit Movie</h2>
@@ -98,8 +143,35 @@ export function FormPage({ movie, onSaveChanges }: ISaveChanges): JSX.Element {
         <div className={`${blockName}__field-wrapper`}>
             <div className={`${blockName}__title`}>genre</div>
             <FormSelect
-                onApplyGenres={updateGenres}
-                genres={movieInfo.genres}/>
+                passSelectedItems={updateGenres}
+                appliedItems={movieInfo.genres}
+                allItems={availableGenres}
+                placeholder="Select Genre"/>
+        </div>
+        <div className={`${blockName}__field-wrapper`}>
+            <div className={`${blockName}__title`}>country</div>
+            <FormSelect
+                passSelectedItems={updateCountries}
+                appliedItems={movieInfo.countries}
+                allItems={availableCountries}
+                placeholder="Select Countries"/>
+        </div>
+        <div className={`${blockName}__field-wrapper`}>
+            <div className={`${blockName}__title`}>producer</div>
+            <FormSelect
+                passSelectedItems={updateProducers}
+                appliedItems={movieInfo.producers}
+                allItems={availableProducers}
+                placeholder="Select Countries"/>
+        </div>
+        <div className={`${blockName}__field-wrapper`}>
+            <div className={`${blockName}__title`}>rate mpaa</div>
+            <FormSelect
+                passSelectedItems={updateRateMpAA}
+                appliedItems={[movieInfo.rateMpAA]}
+                allItems={availableRatesMpAA}
+                multiple={false}
+                placeholder="Select Rate MpAA"/>
         </div>
         <div className={`${blockName}__field-wrapper`}>
             <label

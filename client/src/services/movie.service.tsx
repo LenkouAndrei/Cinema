@@ -1,5 +1,5 @@
 import axios from 'axios';
-import { TNullable, TSortListItem } from '../types/types';
+import { TNullable, TSortListItem, IMovie } from '../types/types';
 
 interface IMovieRequest {
     skip: number;
@@ -11,7 +11,7 @@ interface IMovieRequest {
 }
 export class MovieService {
     private readonly moviesUrl = (postfix = '') => `http://localhost:5000/api/movies${postfix}`;
-    private readonly genresUrl = 'http://localhost:5000/api/genres';
+
     public getMovies({
             skip = 0,
             limit = 5,
@@ -31,10 +31,15 @@ export class MovieService {
             .then((res) => res.data);
     }
 
-
-    public getGenres() {
-        return fetch(this.genresUrl)
-            .then((res) => res.json());
+    public updateMovie(movie: IMovie) {
+        const movieId = movie._id;
+        return axios.patch(
+            this.moviesUrl(`/${movieId}`),
+            {
+                params: { id: movieId },
+                movieWithUpdates: movie,
+            })
+            .then((res) => res.data)
     }
 }
 

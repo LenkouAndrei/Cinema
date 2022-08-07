@@ -15,5 +15,8 @@ export const movie: IMovie = {
     'Drama',
     'Romance'
   ],
-  'runtime': 106
+  'runtime': 106,
+  'countries': [],
+  'producers': [],
+  'rateMpAA': { name: '0+', ageLimit: 0 }
 };

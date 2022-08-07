@@ -11,6 +11,7 @@ import {
 import './main.scss';
 import { moviesSortList } from './mockMoviesSortList';
 import { movieService } from '../../services/movie.service';
+import { genresService } from '../../services/genres.service';
 
 const defaultMovies: IMovie[] = require('../../data.json');
 const blockName = 'result';
@@ -24,22 +25,15 @@ interface IMainProps {
 
 type TVoidWithNoArgs = () => void;
 type TShowModal = (modalType: string) => void;
-type THandleMovie = (modalDialogType: string, id: number) => void;
 type TSetGenre = (genre: IGenresListItem) => void;
 type TUpdateMovieSet = (editableMovie: IMovie) => void;
 type TUpdateMoviesSortConfig = (isOpen: boolean, title?: TSortListItem) => void;
 type TSortMoviesByField = (field: keyof IMovie) => void;
-type TShowDetails = (event: MouseEvent, movieWithDetails: IMovie) => void;
 
 const defaultGenre: IGenresListItem = {
     name: 'All',
     id: null
 };
-
-interface IResponseGenre {
-    name: string;
-    _id: string;
-}
 
 let moviesAmt = 0;
 let pageNum = 1;
@@ -47,9 +41,9 @@ const limitPerPage = 5;
 
 export function Main(props: IMainProps): JSX.Element {
     useEffect(() => {
-        movieService.getGenres()
+        genresService.getGenres()
             .then(responseGenres => {
-                const genres: IGenresListItem[] = [defaultGenre, ...responseGenres.map(({ name, _id }: IResponseGenre) => ({ name, id: _id }))];
+                const genres: IGenresListItem[] = [defaultGenre, ...responseGenres];
                 setMoviesGenresConfig({
                     genres,
                     currentGenre: genres[0]
@@ -119,7 +113,7 @@ export function Main(props: IMainProps): JSX.Element {
             sortFieldUI: moviesSortConfig.chosenOption,
             searchText,
             limit: limitPerPage,
-            skip: pageIdx
+            skip: pageNum
         }).then(setMoviesData);
     };
 
@@ -133,9 +127,10 @@ export function Main(props: IMainProps): JSX.Element {
         setIsDeleteDialogOpen(false);
     };
 
-    const handleMovieToEditChange: THandleMovie = (modalDialogType: string, id: number) => {
-        setMovieToEdit(movies.find((movie: IMovie) => movie.id === id));
-        showModal(modalDialogType);
+    const handleMovieToEditChange = (movieId: string) => (modalDialogType: string) => {
+        movieService.getMovieById(movieId)
+            .then(setMovieToEdit)
+            .then(() => showModal(modalDialogType));
     };
 
     const sortMoviesByField: TSortMoviesByField = (field: keyof IMovie) => {
@@ -160,12 +155,17 @@ export function Main(props: IMainProps): JSX.Element {
     };
 
     const updateMoviesSet: TUpdateMovieSet = (editableMovie: IMovie) => {
-        const movieIdx: number = movies
-            .findIndex(({ id }: IMovie) => id === movieToEdit.id);
-        const newMovies: IMovie[] = [ ...movies ];
-        newMovies.splice(movieIdx, 1, editableMovie);
-        setMovies( newMovies );
-        hideModal();
+        movieService.updateMovie(editableMovie)
+            .then(updatedMovie => {
+                setMovieToEdit(updatedMovie);
+                return updatedMovie;
+            })
+            .then((updatedMovie) => {
+                const updatedMovieIdx = movies.findIndex(movie => movie._id === updatedMovie._id);
+                movies[updatedMovieIdx] = updatedMovie;
+                setMovies(movies);
+            })
+            .then(() => hideModal());
     };
 
     const setCurrentGenre: TSetGenre = useCallback(
@@ -220,7 +220,7 @@ export function Main(props: IMainProps): JSX.Element {
                 className={`${blockName}__movies-card`}
                 key={movie.id}
                 onClick={showDetails(movie)}>
-                <MovieCard onClickMovie={handleMovieToEditChange} movie={movie}/>
+                <MovieCard onClickMovie={handleMovieToEditChange(movie._id)} movie={movie}/>
             </li>;
         });
 
@@ -229,7 +229,7 @@ export function Main(props: IMainProps): JSX.Element {
             <FormPage onSaveChanges={updateMoviesSet} movie={ movieToEdit }/>
         </Modal>
         <Modal isOpen={isDeleteDialogOpen} handleClose={hideModal}>
-            <DeleteModal  onDeleteConfirm={deleteMovie} title={movieToEdit.title}/>
+            <DeleteModal onDeleteConfirm={deleteMovie} title={movieToEdit.title}/>
         </Modal>
         <Wrapper>
             { props.areDetailsVisible && movieWithDetails ?

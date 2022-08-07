@@ -1,12 +1,14 @@
-import React, { ChangeEvent, MouseEvent, useState, useCallback } from 'react';
+import React, { ChangeEvent, MouseEvent, useState, useMemo } from 'react';
 import { faAngleDown } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import './form-select.scss';
-import { allGenres } from './mockGenres';
 
 interface ISelectFormProps {
-    onApplyGenres: (newGenres: string[]) => void;
-    genres: string[];
+    passSelectedItems: (newGenres: (string[] | string)) => void;
+    appliedItems: string[];
+    allItems: { name: string, id: string }[];
+    placeholder: string;
+    multiple?: boolean;
 }
 
 type TMouseClick = (event: MouseEvent) => void;
@@ -14,10 +16,9 @@ type TChangeEventHandler = (event: ChangeEvent<HTMLInputElement>) => void;
 
 const blockName = 'form-select';
 
-export function FormSelect({ genres, onApplyGenres }: ISelectFormProps): JSX.Element {
-    const [ selectedGenres , setSelectedGenres ] = useState(genres);
+export function FormSelect({ appliedItems, allItems, placeholder, multiple = true, passSelectedItems }: ISelectFormProps): JSX.Element {
+    const [ selectedItems , setSelectedItems ] = useState(appliedItems);
     const [ isOpen , setIsOpen ] = useState(false);
-    const genresOptions = Array.from(new Set([ ...allGenres, ...genres ]));
 
     const toggleSelectDropdown: TMouseClick = (event) => {
       event.preventDefault();
@@ -27,29 +28,42 @@ export function FormSelect({ genres, onApplyGenres }: ISelectFormProps): JSX.Ele
         setIsOpen(true);
       } else {
         setIsOpen(false);
-        onApplyGenres(selectedGenres);
+        passSelectedItems(selectedItems);
       }
     };
 
+    const updateSelectedItems = (selectedItems: string[], name: string, checked: boolean, multiple: boolean) => {
+        if (!multiple) {
+            return [name];
+        }
+        return checked
+            ? [ ...selectedItems, name ]
+            : selectedItems.filter(item => item !== name);
+    }
+
     const handleCheckboxChange: TChangeEventHandler = (event) => {
-      const { checked, name } = event.target as HTMLInputElement;
-      const chosenGenres: string[] = checked ? [ ...selectedGenres, name ] :
-          selectedGenres.filter(genre => genre !== name);
-      setSelectedGenres(chosenGenres);
+        const { checked, name } = event.target as HTMLInputElement;
+        setSelectedItems(updateSelectedItems(selectedItems, name, checked, multiple));
     };
 
-    const genresList: JSX.Element[] = genresOptions.map(genre => {
+    const chosenItemNames = useMemo(() => {
+        return selectedItems
+            .map(itemId => allItems.find(({ id }) => itemId === id).name)
+            .join(', ') || placeholder;
+    }, [selectedItems.length, selectedItems[0]])
+
+    const genresList: JSX.Element[] = allItems.map(item => {
         return <li
             className={`${blockName}__item`}
-            key={genre}>
+            key={item.id}>
             <label className={`${blockName}__label`}>
                 <input
                     className={`${blockName}__checkbox`}
                     type='checkbox'
-                    name={genre}
-                    checked={selectedGenres.includes(genre)}
+                    name={item.id}
+                    checked={selectedItems.includes(item.id)}
                     onChange={handleCheckboxChange}/>
-                {genre}
+                {item.name}
             </label>
         </li>;
     });
@@ -58,15 +72,14 @@ export function FormSelect({ genres, onApplyGenres }: ISelectFormProps): JSX.Ele
         <button
             className={`${blockName}__btn`}
             onClick={toggleSelectDropdown}>
-            <span className={`${blockName}__chosen-items`}>
-                { selectedGenres.join(', ') || 'Select Genre' }
-            </span>
+            <span className={`${blockName}__chosen-items`}>{ chosenItemNames }</span>
             <FontAwesomeIcon
                 className={`${blockName}__icon`}
                 icon={faAngleDown}
                 size='lg'/>
         </button>
-        { isOpen && <ul className={`${blockName}__list`}>
+        { isOpen && <ul
+            className={`${blockName}__list`}>
             { genresList }
         </ul>}
     </>;

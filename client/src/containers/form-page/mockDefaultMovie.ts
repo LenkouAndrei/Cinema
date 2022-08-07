@@ -12,4 +12,7 @@ export const defaultMovie: IMovie = {
     revenue: 0,
     genres: [],
     runtime: 0,
+    countries: [],
+    producers: [],
+    rateMpAA: '',
 };

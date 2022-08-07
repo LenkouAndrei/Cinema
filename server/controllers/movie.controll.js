@@ -44,6 +44,7 @@ const getAllMovies = async(req, res) => {
             searchQuery.genres = ObjectId(genreId);
         }
         const movies = await MovieModel.find(searchQuery).sort({ [sortField]: +sortOrder }).skip(+skip).limit(+limit).lean();
+        console.log('searchQuery: ', searchQuery);
         const moviesAmount = await MovieModel.find(searchQuery).count();
         const updatedMovies = await Promise.all(movies.map(updateFields));
         console.log('moviesAmount: ', moviesAmount);
@@ -84,11 +85,18 @@ const getMovieById = async(req, res) => {
 
 const updateMovie = async(req, res) => {
 	try {
-		const movie = await MovieModel.findOne({ _id: req.params.id });
-        const updatedMovie = { ...movie, ...req.body };
-
-		await updatedMovie.save();
-		res.send(updatedMovie);
+        const { movieWithUpdates = {} } = req.body;
+        movieWithUpdates.genres = movieWithUpdates.genres.map(value => ObjectId(value));
+        movieWithUpdates.producers = movieWithUpdates.producers.map(value => ObjectId(value));
+        movieWithUpdates.countries = movieWithUpdates.countries.map(value => ObjectId(value));
+        movieWithUpdates.rateMpAA = ObjectId(movieWithUpdates.rateMpAA);
+		const updatedMovie = await MovieModel.findOneAndUpdate(
+            { _id: req.params.id },
+            { $set: movieWithUpdates },
+            { new: true }
+        ).lean();
+        const movieWithUpdatedFields = await updateFields(updatedMovie);
+		res.send(movieWithUpdatedFields);
 	} catch {
 		res.status(404);
 		res.send({ error: "Movie doesn't exist!" });
