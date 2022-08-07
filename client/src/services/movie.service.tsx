@@ -22,8 +22,8 @@ export class MovieService {
         }: Partial<IMovieRequest>) {
         const sortField = sortFieldUI.split(' ').join('_');
         return axios.get(this.moviesUrl(), {
-            params: { skip, limit, sortField, sortOrder, genreId, searchText }
-        }).then((res) => res.data);
+                params: { skip, limit, sortField, sortOrder, genreId, searchText }
+            }).then((res) => res.data);
     }
 
     public getMovieById(movieId: string) {

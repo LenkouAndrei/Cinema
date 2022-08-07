@@ -6,3 +6,4 @@ export * from './movie-card/movie-card';
 export * from './form-select/form-select';
 export * from './delete-modal/delete-modal';
 export * from './details/details';
+export * from './pagination/pagination';

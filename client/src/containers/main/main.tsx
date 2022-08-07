@@ -1,6 +1,6 @@
 import React, { MouseEvent, useCallback, useEffect, useState, ChangeEvent } from 'react';
 import { FormPage, Modal, Wrapper } from '../';
-import { DeleteModal, Details, MovieCard, ResultFilter, ResultSort, Search } from '../../components';
+import { DeleteModal, Details, MovieCard, ResultFilter, ResultSort, Search, Pagination } from '../../components';
 import {
     IMovie,
     ISelectConfig,
@@ -40,6 +40,10 @@ interface IResponseGenre {
     name: string;
     _id: string;
 }
+
+let moviesAmt = 0;
+let pageNum = 1;
+const limitPerPage = 5;
 
 export function Main(props: IMainProps): JSX.Element {
     useEffect(() => {
@@ -81,13 +85,18 @@ export function Main(props: IMainProps): JSX.Element {
     const [ greatestId, setGreatestId ] = useState(initGreatestId);
     const [ movieWithDetails, setMovieWithDetails ] = useState(null);
 
+    const setMoviesData = ({ movies, moviesAmount }: { movies: IMovie[], moviesAmount: number }) => {
+        setMovies(movies);
+        moviesAmt = moviesAmount;
+    }
 
     useEffect(() => {
         movieService.getMovies({
             genreId: moviesGenresConfig.currentGenre.id,
             sortFieldUI: moviesSortConfig.chosenOption,
-            searchText
-        }).then(setMovies);
+            searchText,
+            limit: limitPerPage,
+        }).then(setMoviesData);
     }, [moviesGenresConfig.currentGenre, moviesSortConfig.chosenOption]);
 
     useEffect(
@@ -102,6 +111,17 @@ export function Main(props: IMainProps): JSX.Element {
         },
         [props.movieToAdd]
     );
+
+    const handlePaginationClick = (pageIdx: number) => {
+        pageNum = pageIdx;
+        movieService.getMovies({
+            genreId: moviesGenresConfig.currentGenre.id,
+            sortFieldUI: moviesSortConfig.chosenOption,
+            searchText,
+            limit: limitPerPage,
+            skip: pageIdx
+        }).then(setMoviesData);
+    };
 
     const showModal: TShowModal = (modalType: string) => {
         setIsFormDialogOpen(modalType === 'Edit');
@@ -168,7 +188,6 @@ export function Main(props: IMainProps): JSX.Element {
     };
 
     const showDetails = (movie: IMovie) => (event: MouseEvent) => {
-        console.log('Target: ', event.target);
         movieService.getMovieById(movie._id)
             .then(setMovieWithDetails);
         props.onChangePage();
@@ -181,7 +200,8 @@ export function Main(props: IMainProps): JSX.Element {
                 genreId: moviesGenresConfig.currentGenre.id,
                 sortFieldUI: moviesSortConfig.chosenOption,
                 searchText,
-            }).then(setMovies);
+                limit: limitPerPage,
+            }).then(setMoviesData);
         }
     }
 
@@ -228,11 +248,17 @@ export function Main(props: IMainProps): JSX.Element {
                         {...moviesSortConfig}/>
                 </section>
                 <div className={`${blockName}__amount`}>
-                    <strong className='strong'>{movies.length}</strong> movies found
+                    <strong className='strong'>{moviesAmt}</strong> movies found
                 </div>
                 <ul className={`${blockName}__cards-list`}>
                     {moviesCards}
                 </ul>
+                <Pagination
+                    onPageChange={handlePaginationClick}
+                    totalCount={moviesAmt}
+                    pageSize={limitPerPage}
+                    siblingCount={1}
+                    currentPage={pageNum}/>
             </>
         </Wrapper>
     </main>;
