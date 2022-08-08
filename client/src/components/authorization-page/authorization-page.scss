@@ -1,0 +1,38 @@
+.authorization {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-flow: column;
+    height: 100vh;
+
+    &__form {
+        display: flex;
+        flex-flow: column;
+        width: 500px;
+    }
+
+    &__label {
+        display: flex;
+        justify-content: space-between;
+        margin: 5px 0;
+    }
+
+    &__field {
+        width: 350px;
+    }
+
+    &__standalone {
+        width: 500px;
+    }
+}
+
+.standalone {
+    &__separator {
+        margin: 10px 0;
+        border-bottom: 2px solid white;
+    }
+
+    &__escape-btn {
+
+    }
+}

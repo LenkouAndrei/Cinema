@@ -6,6 +6,7 @@ import {
   Main,
   PageName,
 } from '../containers';
+import { AuthorizationPage } from '../components/authorization-page/authorization-page';
 import './app.scss';
 
 function App(): JSX.Element {
@@ -26,7 +27,9 @@ function App(): JSX.Element {
   return (
     <React.StrictMode>
       <ErrorBoundary>
-        <Header
+        <></>
+        <AuthorizationPage />
+        {/* <Header
           onAddBtnClick={setNewMovie}
           onSearchBtnClick={clickSearchBtn}
           pageName={pageName}/>
@@ -35,7 +38,7 @@ function App(): JSX.Element {
           areDetailsVisible={areDetailsVisible}
           onChangePage={changePage}
         />
-        <Footer />
+        <Footer /> */}
       </ErrorBoundary>
     </React.StrictMode>
   );

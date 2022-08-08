@@ -180,18 +180,24 @@ export function Main(props: IMainProps): JSX.Element {
     );
 
     const deleteMovie: TVoidWithNoArgs = () => {
-        const movieIdx: number = movies
-            .findIndex(({ id }: IMovie) => id === movieToEdit.id);
-        const newMovies: IMovie[] = [ ...movies ];
-        newMovies.splice(movieIdx, 1);
-        setMovies( newMovies );
-        hideModal();
+        movieService.deleteMovie(movieToEdit._id)
+            .then(() => {
+                return movieService.getMovies({
+                    genreId: moviesGenresConfig.currentGenre.id,
+                    sortFieldUI: moviesSortConfig.chosenOption,
+                    searchText,
+                    limit: limitPerPage,
+                    skip: --pageNum
+                })
+            })
+            .then(setMoviesData)
+            .then(() => hideModal());
     };
 
     const showDetails = (movie: IMovie) => (event: MouseEvent) => {
         movieService.getMovieById(movie._id)
-            .then(setMovieWithDetails);
-        props.onChangePage();
+            .then(setMovieWithDetails)
+            .then(() => props.onChangePage());
     };
 
     const findByText = (inputEl: HTMLInputElement) => {

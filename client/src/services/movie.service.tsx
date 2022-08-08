@@ -46,6 +46,11 @@ export class MovieService {
         return axios.post(this.moviesUrl(), movie)
             .then((res) => res.data);
     }
+
+    public deleteMovie(id: string) {
+        return axios.delete(this.moviesUrl(`/${id}`), { params: { id } })
+            .then((res) => res.data);
+    }
 }
 
 const movieService = new MovieService();
