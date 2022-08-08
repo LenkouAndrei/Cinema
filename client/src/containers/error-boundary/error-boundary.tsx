@@ -7,7 +7,7 @@ interface IErrorState {
 }
 
 interface IErrorProps {
-  children: ReactNode[];
+  children: ReactNode;
   error?: TNullable<Error>;
   errorInfo?: TNullable<ErrorInfo>;
 }

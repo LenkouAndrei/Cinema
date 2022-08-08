@@ -18,7 +18,7 @@ router.get("/countries", CountriesCtrl.getCountries);
 router.get("/producers", ProducersCtrl.getProducers);
 router.get("/rateMpAA", RateMpAACtrl.getRatesMpAA);
 
-router.get("/user", UserCtrl.getAccess);
+router.post("/user", UserCtrl.getAccess);
 // router.post("/user", UserCtrl.addUser);
 
 module.exports = router;

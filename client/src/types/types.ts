@@ -43,3 +43,8 @@ export interface IMoviesGenresConfig {
     genres: IGenresListItem[];
     currentGenre: IGenresListItem;
 }
+
+export interface ICredentials {
+    email: TNullable<string>;
+    password: TNullable<string>;
+}

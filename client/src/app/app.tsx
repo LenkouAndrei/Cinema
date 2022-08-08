@@ -1,44 +1,20 @@
-import React, { useState } from 'react';
-import {
-  ErrorBoundary,
-  Footer,
-  Header,
-  Main,
-  PageName,
-} from '../containers';
-import { AuthorizationPage } from '../components/authorization-page/authorization-page';
+import React from 'react';
+import { ErrorBoundary } from '../containers';
+import { AuthorizationPage } from '../pages/authorization-page/authorization-page';
+import { MoviesPage } from '../pages/movies-page/movies-page';
+import { BrowserRouter, Routes, Route } from "react-router-dom";
 import './app.scss';
 
 function App(): JSX.Element {
-  const [newMovie, setNewMovie] = useState(null);
-  const [pageName, setPageName] = useState(PageName.Main);
-  const [areDetailsVisible, setAreDetailsVisible] = useState(false);
-
-  const changePage = () => {
-    setPageName(PageName.Details);
-    setAreDetailsVisible(true);
-  };
-
-  const clickSearchBtn = () => {
-    setPageName(PageName.Main);
-    setAreDetailsVisible(false);
-  };
-
   return (
     <React.StrictMode>
       <ErrorBoundary>
-        <></>
-        <AuthorizationPage />
-        {/* <Header
-          onAddBtnClick={setNewMovie}
-          onSearchBtnClick={clickSearchBtn}
-          pageName={pageName}/>
-        <Main
-          movieToAdd={newMovie}
-          areDetailsVisible={areDetailsVisible}
-          onChangePage={changePage}
-        />
-        <Footer /> */}
+        <BrowserRouter>
+          <Routes>
+            <Route path="/" element={<AuthorizationPage />}></Route>
+            <Route path="/movies" element={<MoviesPage />} />
+          </Routes>
+        </BrowserRouter>
       </ErrorBoundary>
     </React.StrictMode>
   );
