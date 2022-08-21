@@ -44,7 +44,7 @@ const getAllMovies = async(req, res) => {
             searchQuery.genres = ObjectId(genreId);
         }
         const movies = await MovieModel.find(searchQuery).sort({ [sortField]: +sortOrder }).skip(+skip).limit(+limit).lean();
-        const moviesAmount = await MovieModel.find(searchQuery).count();
+        const moviesAmount = await MovieModel.find(searchQuery).countDocuments();
         const updatedMovies = await Promise.all(movies.map(updateFields));
         res.json({ movies: updatedMovies, moviesAmount });
     } catch(error) {

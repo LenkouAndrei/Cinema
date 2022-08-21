@@ -39,8 +39,20 @@ export function MovieCard({ movie, onClickMovie }: IMovieCardProps): JSX.Element
       onClickMovie(itemTitle);
       setIsEditMenuVisible(false);
     };
+    
+    const getMenuItems = () => {
+        const userType = sessionStorage.getItem('userType');
+        switch(userType) {
+            case 'admin':
+                return ['Edit', 'Delete'];
+            case 'subscriber':
+                return ['Add to favorite'];
+            default:
+                return [];
+        }
+    }
 
-    const menuListItems: JSX.Element[] = menuItemTitles.map((itemTitle: string) => {
+    const menuListItems: JSX.Element[] = getMenuItems().map((itemTitle: string) => {
         return <li
             key={itemTitle}
             className={'menu__list-item'}

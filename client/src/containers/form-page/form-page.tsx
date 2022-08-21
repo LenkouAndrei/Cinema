@@ -29,9 +29,7 @@ let availableProducers: IGenresListItem[];
 let availableRatesMpAA: IGenresListItem[];
 
 export function FormPage({ movie, onSaveChanges }: ISaveChanges): JSX.Element {
-    console.log('movie: ', movie);
     const initialState: IMovie = movie && { ...defaultMovie, ...movie} || defaultMovie;
-    console.log('initialState: ', initialState);
     const [ movieInfo, setMovieInfo ] = useState(null);
 
     const toIdFormat = (genres: IGenresListItem[]) => (genreName: string) => {

@@ -23,8 +23,9 @@ export const AuthorizationPage = () => {
         return [email, password].every(data => data !== null);
     };
 
-    const setSessionUser = (userType: USER_TYPE) => {
+    const setSessionUser = (userType: USER_TYPE, userId: string) => {
         sessionStorage.setItem('userType', userType);
+        sessionStorage.setItem('userId', userId);
     }
 
     const submitAuthorization = (event: any) => {
@@ -33,9 +34,9 @@ export const AuthorizationPage = () => {
         const isDataValid = validateForm(credentials);
         if (!isDataValid) return;
         userService.getAccess(credentials)
-            .then(({ userType }: { userType: TNullable<USER_TYPE> }) => {
+            .then(({ userType, userId }: { userType: TNullable<USER_TYPE>, userId: string }) => {
                 if (userType === null) return;
-                setSessionUser(userType);
+                setSessionUser(userType, userId);
                 navigate("movies");
             });
     };
@@ -72,7 +73,7 @@ export const AuthorizationPage = () => {
                     <div className="standalone__separator"/>
                     <button
                         className="standalone__escape-btn"
-                        onClick={() => setSessionUser(USER_TYPE.GUEST)}>Enter as a guest</button>
+                        onClick={() => setSessionUser(USER_TYPE.GUEST, null)}>Enter as a guest</button>
                 </div>
             </div>
         </Wrapper>

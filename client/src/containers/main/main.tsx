@@ -12,6 +12,7 @@ import './main.scss';
 import { moviesSortList } from './mockMoviesSortList';
 import { movieService } from '../../services/movie.service';
 import { genresService } from '../../services/genres.service';
+import { favoritesService } from '../../services/favorites.service';
 
 const defaultMovies: IMovie[] = require('../../data.json');
 const blockName = 'result';
@@ -130,7 +131,13 @@ export function Main(props: IMainProps): JSX.Element {
 
     const handleMovieToEditChange = (movieId: string) => (modalDialogType: string) => {
         movieService.getMovieById(movieId)
-            .then(setMovieToEdit)
+            .then((movie) => {
+                if (modalDialogType === 'Add to favorite') {
+                    favoritesService.addFavorite({ movieId: movie._id, comments: [] });
+                } else {
+                    return setMovieToEdit(movie);
+                }
+            })
             .then(() => showModal(modalDialogType));
     };
 

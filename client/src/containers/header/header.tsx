@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { Logo } from '../../components';
 import { IMovie, TNullable } from '../../types/types';
 import { FormPage, Modal, Wrapper } from '../';
@@ -24,7 +24,12 @@ type TCreateMovie = (newMovie: IMovie) => void;
 const blockName = 'header';
 
 export function Header({ pageName, onAddBtnClick, onSearchBtnClick }: IHeaderProps): JSX.Element {
+    let userType: string;
     const [ isDialogOpen, setIsDialogOpen ] = useState(false);
+
+    useEffect(() => {
+        userType = sessionStorage.getItem('userType');
+    }, []);
 
     const showModal: TVoidFunc = () => {
         setIsDialogOpen(true);
@@ -35,7 +40,6 @@ export function Header({ pageName, onAddBtnClick, onSearchBtnClick }: IHeaderPro
     };
 
     const createNewMovie: TCreateMovie = (newMovie: IMovie) => {
-        console.log('newMovie: ', newMovie);
         movieService.addMovie(newMovie)
             .then(onAddBtnClick)
             .then(() => { hideModal(); })
@@ -45,13 +49,29 @@ export function Header({ pageName, onAddBtnClick, onSearchBtnClick }: IHeaderPro
         onSearchBtnClick();
     };
 
+    const logger = () => {
+        console.log('Log Log');
+    }
+
+    const getButton = () => {
+        const userType = sessionStorage.getItem('userType');
+        switch(userType) {
+            case 'admin':
+                return <button
+                className={'add-btn'}
+                onClick={showModal}>+ Add Movie</button>;
+            case 'subscriber':
+                return <button
+                className={'search__btn favorite-btn'}
+                onClick={logger}>Favorite</button>;
+        }
+    };
+
     const getHeaderElement: () => TNullable<JSX.Element> = () => {
         switch (pageName) {
             case PageName.Main:
                 return <>
-                    <button
-                        className={'add-btn'}
-                        onClick={showModal}>+ Add Movie</button>
+                    { sessionStorage.getItem('userType') && getButton() || null }
                     <Modal isOpen={isDialogOpen} handleClose={hideModal}>
                         <FormPage onSaveChanges={createNewMovie} movie={null}/>
                     </Modal>
