@@ -1,12 +1,20 @@
 const FavoriteModel = require("../models/Favorite");
 const mongoose = require('mongoose');
+const { getUpdatedMovieById } = require("./movie.controll");
 const ObjectId = mongoose.Types.ObjectId;
+
+const updateFields = async(favorite) => {
+    favorite.movie = await getUpdatedMovieById(favorite.movieId);
+    delete favorite.movieId;
+    return favorite;
+};
 
 const getFavorites = async(req, res) => {
     try {
         const { userId } = req.query;
         const favorites = await FavoriteModel.find({ userId }).lean();
-        res.json({ favorites });
+        const updatedFavorites = await Promise.all(favorites.map(updateFields));
+        res.json(updatedFavorites);
     } catch(error) {
         console.log(error);
         res.sendStatus(500);

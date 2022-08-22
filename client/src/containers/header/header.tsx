@@ -6,11 +6,12 @@ import { faSearch } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import './header.scss';
 import { movieService } from '../../services/movie.service';
+import { useNavigate, Link } from "react-router-dom";
 
 export interface IHeaderProps {
-    pageName: PageName;
-    onAddBtnClick: (newMovie: IMovie) => void;
-    onSearchBtnClick: () => void;
+    pageName?: PageName;
+    onAddBtnClick?: (newMovie: IMovie) => void;
+    onSearchBtnClick?: () => void;
 }
 
 export enum PageName {
@@ -31,6 +32,8 @@ export function Header({ pageName, onAddBtnClick, onSearchBtnClick }: IHeaderPro
         userType = sessionStorage.getItem('userType');
     }, []);
 
+    const navigate = useNavigate();
+
     const showModal: TVoidFunc = () => {
         setIsDialogOpen(true);
     };
@@ -49,10 +52,6 @@ export function Header({ pageName, onAddBtnClick, onSearchBtnClick }: IHeaderPro
         onSearchBtnClick();
     };
 
-    const logger = () => {
-        console.log('Log Log');
-    }
-
     const getButton = () => {
         const userType = sessionStorage.getItem('userType');
         switch(userType) {
@@ -61,10 +60,10 @@ export function Header({ pageName, onAddBtnClick, onSearchBtnClick }: IHeaderPro
                 className={'add-btn'}
                 onClick={showModal}>+ Add Movie</button>;
             case 'subscriber':
-                return <button
-                className={'search__btn favorite-btn'}
-                onClick={logger}>Favorite</button>;
-        }
+                return <Link to="/favorites">
+                    <button className={'search__btn favorite-btn'}>Favorite</button>
+                </Link>;
+    }
     };
 
     const getHeaderElement: () => TNullable<JSX.Element> = () => {

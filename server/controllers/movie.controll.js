@@ -95,10 +95,14 @@ const addMovie = async(req, res) => {
     }
 }
 
+const getUpdatedMovieById = async(movieId) => {
+    const movie = await MovieModel.findOne({ _id: movieId }).lean();
+    return updateFields(movie);
+}
+
 const getMovieById = async(req, res) => {
     try {
-        const movie = await MovieModel.findOne({ _id: req.params.id }).lean();
-        const updatedMovie = await updateFields(movie);
+        const updatedMovie = await getUpdatedMovieById(req.params.id);
         res.send(updatedMovie);
     } catch(error) {
         console.log(error);
@@ -137,4 +141,4 @@ const deleteMovie = async(req, res) => {
 	}
 }
 
-module.exports = { getAllMovies, addMovie, getMovieById, updateMovie, deleteMovie };
+module.exports = { getAllMovies, addMovie, getMovieById, updateMovie, deleteMovie, getUpdatedMovieById };

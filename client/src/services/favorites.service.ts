@@ -11,17 +11,12 @@ export class FavoritesService {
 
     public getFavorites() {
         return axios.get(this.favoritesUrl(), { params: { userId: this.userId } })
-            .then((favoriteList) => {
-                console.log(favoriteList);
-            })
+            .then(favoriteList => favoriteList.data);
     }
 
     public addFavorite({ movieId, comments }: { movieId: string, comments: { id: string, data: string }[]}) {
-        console.log('11111111111 userId: ', this.userId);
         return axios.post(this.favoritesUrl(), { favoriteWithUpdates: { userId: this.userId, movieId, comments } })
-            .then((favoriteList) => {
-                console.log(favoriteList);
-            })
+            .then(favoriteList => favoriteList)
     }
 
     public getFavoriteById(movieId: string) {

@@ -1,0 +1,60 @@
+@import "../../styles/colors-vars";
+
+.favorite {
+    &__article {
+        width: 900px;
+        margin: 50px auto;
+    }
+
+    &__headline {
+        color: $solmon-alpha;
+        font-size: 25px;
+        font-weight: 800;
+        padding-bottom: 15px;
+    }
+
+    &__description {
+        font-size: 20px;
+        padding-bottom: 15px;
+    }
+
+    &__info {
+        display: flex;
+        justify-content: space-between;
+        padding-bottom: 10px;
+    }
+
+    &__buttons {
+        margin-top: 10px;
+
+        .search__btn--small:first-child {
+            margin: 0;
+        }
+    }
+}
+
+.comments {
+    border-top: 1px solid #92969f;
+
+    &__list-item {
+        display: flex;
+        justify-content: space-between;
+        padding-top: 10px;
+        font-style: italic;
+        min-height: 25px;
+    }
+
+    &__text {
+        flex: 1;
+    }
+
+    &__btn-section {
+        float: right;
+
+        &:after {
+            content: "";
+            display: table;
+            clear: both;
+        }
+    }
+}

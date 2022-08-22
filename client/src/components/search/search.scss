@@ -21,16 +21,25 @@
         border-color: $grey-border-color;
     }
 
-    &__btn {
+
+    &__btn, &__btn--small {
         flex: 0;
         margin-left: 5px;
-        padding: 5px 15px;
         background-color: $solmon;
         color: $white;
-        font-size: 18px;
 
         &:hover {
             cursor: pointer;
         }
+    }
+
+    &__btn {
+        padding: 5px 15px;
+        font-size: 18px;
+    }
+
+    &__btn--small {
+        font-size: 15px;
+        padding: 3px 10px;
     }
 }
