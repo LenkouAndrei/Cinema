@@ -240,7 +240,7 @@ export function Main(props: IMainProps): JSX.Element {
             </li>;
         });
 
-    return <main className={blockName}>
+    return <main className={`${blockName} main`}>
         <Modal isOpen={isFormDialogOpen} handleClose={hideModal}>
             <FormPage onSaveChanges={updateMoviesSet} movie={ movieToEdit }/>
         </Modal>
@@ -273,18 +273,20 @@ export function Main(props: IMainProps): JSX.Element {
                             onGenreClick={setCurrentGenre}
                             { ...moviesGenresConfig }/>
                 </section> }
-                <div className={`${blockName}__amount`}>
-                    <strong className='strong'>{moviesAmt}</strong> movies found
-                </div>
-                <ul className={`${blockName}__cards-list`}>
-                    {moviesCards}
-                </ul>
-                <Pagination
-                    onPageChange={handlePaginationClick}
-                    totalCount={moviesAmt}
-                    pageSize={limitPerPage}
-                    siblingCount={1}
-                    currentPage={pageNum}/>
+                <section>
+                    <div className={`${blockName}__amount`}>
+                        <strong className='strong'>{moviesAmt}</strong> movies found
+                    </div>
+                    <ul className={`${blockName}__cards-list`}>
+                        {moviesCards}
+                    </ul>
+                </section>
+                    <Pagination
+                        onPageChange={handlePaginationClick}
+                        totalCount={moviesAmt}
+                        pageSize={limitPerPage}
+                        siblingCount={1}
+                        currentPage={pageNum}/>
             </>
         </Wrapper>
     </main>;

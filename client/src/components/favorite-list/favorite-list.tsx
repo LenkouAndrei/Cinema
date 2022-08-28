@@ -28,5 +28,7 @@ export function FavoriteList(): JSX.Element {
         </li>;
     });
 
-    return <ul>{favoriteListItems}</ul>;
+    return <main className='main'>
+        <ul>{favoriteListItems}</ul>
+    </main>;
 }
