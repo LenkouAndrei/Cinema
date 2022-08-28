@@ -18,20 +18,20 @@ export function Pagination({ currentPage, totalCount, siblingCount, pageSize, on
         return null;
     }
 
-    const onNext = () => {
-        onPageChange(currentPage + 1);
-    };
+    // const onNext = () => {
+    //     onPageChange(currentPage + 1);
+    // };
 
-    const onPrevious = () => {
-        onPageChange(currentPage - 1);
-    };
+    // const onPrevious = () => {
+    //     onPageChange(currentPage - 1);
+    // };
 
     let lastPage = paginationRange[paginationRange.length - 1];
     return (
         <ul className="pagination-container">
-          <li onClick={onPrevious}>
-            <div className="arrow left" />
-          </li>
+          {/* <li onClick={onPrevious}>
+            <i className="fa-regular fa-angle-left" />
+          </li> */}
           {paginationRange.map(pageNumber => {
 
             if (pageNumber === DOTS) {
@@ -40,17 +40,18 @@ export function Pagination({ currentPage, totalCount, siblingCount, pageSize, on
             
             return (
               <li
+                className={`pagination-item ${currentPage === pageNumber ? 'selected' : ''}`}
                 onClick={() => onPageChange(pageNumber as number)}
               >
                 {pageNumber}
               </li>
             );
           })}
-          <li
+          {/* <li
             onClick={onNext}
           >
             <div className="arrow right" />
-          </li>
+          </li> */}
         </ul>
     );
 };

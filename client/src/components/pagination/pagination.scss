@@ -1,33 +1,34 @@
 .pagination-container {
     display: flex;
-    list-style-type: none;
+    align-items: center;
+    justify-content: center;
   
     .pagination-item {
       padding: 0 12px;
       height: 32px;
       text-align: center;
-      margin: auto 4px;
-      color: rgba(0, 0, 0, 0.87);
+      margin: auto 4px;;
       display: flex;
       box-sizing: border-box;
       align-items: center;
       letter-spacing: 0.01071em;
-      border-radius: 16px;
       line-height: 1.43;
-      font-size: 13px;
       min-width: 32px;
   
       &.dots:hover {
         background-color: transparent;
+        color: #92969f;
         cursor: default;
       }
       &:hover {
-        background-color: rgba(0, 0, 0, 0.04);
+        background-color: #FA8072;
+        color: white;
         cursor: pointer;
       }
   
       &.selected {
-        background-color: rgba(0, 0, 0, 0.08);
+        background-color: #FA8072;
+        color: white;
       }
   
       .arrow {
@@ -39,8 +40,8 @@
           display: inline-block;
           width: 0.4em;
           height: 0.4em;
-          border-right: 0.12em solid rgba(0, 0, 0, 0.87);
-          border-top: 0.12em solid rgba(0, 0, 0, 0.87);
+          border-right: 0.12em solid #FA8072;
+          border-top: 0.12em solid #FA8072;
         }
   
         &.left {
@@ -56,8 +57,8 @@
         pointer-events: none;
   
         .arrow::before {
-          border-right: 0.12em solid rgba(0, 0, 0, 0.43);
-          border-top: 0.12em solid rgba(0, 0, 0, 0.43);
+          border-right: 0.12em solid #FA8072;
+          border-top: 0.12em solid #FA8072;
         }
   
         &:hover {
