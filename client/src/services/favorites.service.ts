@@ -38,7 +38,7 @@ export class FavoritesService {
     }
 
     public deleteFavorite(movieId: string) {
-        return axios.delete(this.favoritesUrl(`/${this.userId}`), { params: { userId: this.userId, movieId } })
+        return axios.delete(this.favoritesUrl(`/${this.userId}`), { data: { userId: this.userId, movieId } })
             .then((res) => res.data);
     }
 }

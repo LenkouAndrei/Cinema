@@ -1,9 +1,22 @@
 .authorization {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    flex-flow: column;
-    height: 100vh;
+
+    // background-image: url("../../assets/movies.webp");
+    // background-position: center;
+    // background-repeat: no-repeat;
+    // background-size: cover;
+
+    &__wrapper {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        flex-flow: column;
+        height: 100vh;
+    }
+
+    &__background {
+        background: url("../../assets/movies.webp") center no-repeat;
+        padding: 150px 100px;
+    }
 
     &__form {
         display: flex;
@@ -14,7 +27,10 @@
     &__label {
         display: flex;
         justify-content: space-between;
+        align-items: center;
         margin: 5px 0;
+        padding-left: 15px;
+        background-color: rgba(0,0,0,0.5);
     }
 
     &__field {
@@ -24,15 +40,24 @@
     &__standalone {
         width: 500px;
     }
+
+    &__submit-btn {
+        margin-top: 5px;
+    }
 }
 
 .standalone {
     &__separator {
         margin: 10px 0;
-        border-bottom: 2px solid white;
+        border-bottom: 2px solid #92969f;
     }
 
     &__escape-btn {
-
+        width: 100%;
     }
+}
+
+.authorization__submit-btn,
+.standalone__escape-btn {
+    margin-left: 0;
 }

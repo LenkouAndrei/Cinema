@@ -10,10 +10,12 @@ export interface IFavoriteMovie {
 };
 
 interface IFavoriteItemProps {
-    favoriteMovie: IFavoriteMovie
+    favoriteMovie: IFavoriteMovie;
+    onFavoriteEdit(comments: string[]): void;
+    onFavoriteDelete(): void;
 }
 
-export function FavoriteItem({ favoriteMovie }: IFavoriteItemProps): JSX.Element {
+export function FavoriteItem({ favoriteMovie, onFavoriteEdit, onFavoriteDelete }: IFavoriteItemProps): JSX.Element {
     const emptyComment = ' ';
     const [isEdited, setIsEdited] = useState(false);
     const [comments, setComments] = useState([...favoriteMovie.comments, emptyComment]);
@@ -30,18 +32,24 @@ export function FavoriteItem({ favoriteMovie }: IFavoriteItemProps): JSX.Element
         setIsEdited(isEdit);
     }
 
+    const editFavorite = () => {
+        const emptylessComment = comments.filter(el => el !== emptyComment);
+        onFavoriteEdit(emptylessComment);
+    }
+
     const cloneComments = () => setClonedComments(JSON.parse(JSON.stringify(comments)));
     const resetComments = () => setComments(clonedComments);
     const deleteComment = (idx: number) => (event: any) => {
         preventAndStop(event);
         setComments(comments => {
             return comments.filter((_comment, index) => index !== idx);
-        })
+        });
+        editFavorite();
     }
 
     const handleEdit = handleCommentAction(true, cloneComments);
     const handleCancel = handleCommentAction(false, resetComments);
-    const handleSave = handleCommentAction(false);
+    const handleSave = handleCommentAction(false, editFavorite);
 
     const handleCommentChange = (idx: number) => (event: any) => {
         preventAndStop(event);
@@ -49,6 +57,11 @@ export function FavoriteItem({ favoriteMovie }: IFavoriteItemProps): JSX.Element
             comments.splice(idx, 1, event.target.value);
             return [...comments];
         });
+    }
+
+    const handleDeletefavorite = (event: any) => {
+        preventAndStop(event);
+        onFavoriteDelete();
     }
 
     const getComments = () => {
@@ -81,7 +94,9 @@ export function FavoriteItem({ favoriteMovie }: IFavoriteItemProps): JSX.Element
                 className="search__btn--small"
                 data-edit
                 onClick={handleEdit}>Edit Comments</button>
-            <button className="search__btn--small">Delete Movie From List</button>
+            <button 
+                className="search__btn--small"
+                onClick={handleDeletefavorite}>Delete Movie From List</button>
         </>
     }
 

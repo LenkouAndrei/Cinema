@@ -10,9 +10,21 @@ export function FavoriteList(): JSX.Element {
             .then(setFavoriteMovies);
     }, []);
 
+    const editFavoriteMovie = (favoriteMovie: IFavoriteMovie) => (comments: string[]) => {
+        favoriteMovie.comments = comments;
+        favoritesService.updateFavorite(favoriteMovie);
+    };
+
+    const deleteFavoriteMovie = (favoriteMovie: IFavoriteMovie) => () => {
+        favoritesService.deleteFavorite(favoriteMovie.movie._id);
+    }
+
     const favoriteListItems = favoriteMovies.map((favoriteMovie: IFavoriteMovie) => {
         return <li key={favoriteMovie.movie._id}>
-            <FavoriteItem favoriteMovie={favoriteMovie}/>
+            <FavoriteItem
+                favoriteMovie={favoriteMovie}
+                onFavoriteEdit={editFavoriteMovie(favoriteMovie)}
+                onFavoriteDelete={deleteFavoriteMovie(favoriteMovie)}/>
         </li>;
     });
 

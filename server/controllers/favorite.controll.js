@@ -55,12 +55,12 @@ const getFavoriteById = async(req, res) => {
 const updateFavorite = async(req, res) => {
 	try {
         const { favoriteWithUpdates = {} } = req.body;
-        favoriteWithUpdates.userId = ObjectId(favoriteWithUpdates.userId);
-        favoriteWithUpdates.movieId = ObjectId(favoriteWithUpdates.movieId);
-		const updatedFavorite = await FavoriteModel.findOneAndUpdate(
-            { _id: req.params.id },
-            { $set: favoriteWithUpdates },
-            { new: true }
+        const userId = ObjectId(favoriteWithUpdates.userId);
+        const movieId = ObjectId(favoriteWithUpdates.movie._id);
+		const updatedFavorite = await FavoriteModel.updateOne(
+            { userId, movieId },
+            { $set: { comments: favoriteWithUpdates.comments } },
+            { upsert: true }
         ).lean();
 		res.send(updatedFavorite);
 	} catch {
@@ -71,7 +71,12 @@ const updateFavorite = async(req, res) => {
 
 const deleteFavorite = async(req, res) => {
 	try {
-		await FavoriteModel.deleteOne({ _id: req.params.id });
+        const { userId, movieId } = req.body;
+		const test = await FavoriteModel.findOne({ userId: ObjectId(userId), movieId: ObjectId(movieId) }).lean();
+        console.log('userId: ', userId);
+        console.log('movieId: ', movieId);
+        console.log('test: ', test);
+        await FavoriteModel.deleteOne({ userId: ObjectId(userId), movieId: ObjectId(movieId) });
 		res.status(204).send();
 	} catch {
 		res.status(404);
