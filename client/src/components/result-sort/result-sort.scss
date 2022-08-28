@@ -9,6 +9,10 @@
     &__list {
         position: absolute;
         z-index: 100;
+
+        .result-sort__item:first-child {
+            margin-top: 2px;
+        }
     }
 
     &__btn {
@@ -40,4 +44,8 @@
     &__icon--bright {
         color: $solmon;
     }
+}
+
+.untracked {
+    border: 0;
 }

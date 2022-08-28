@@ -14,7 +14,7 @@
     &__filter {
         display: flex;
         justify-content: space-between;
-        box-shadow: inset 0 -2px 0 $grey-border-color;
+        border-bottom: 2px solid $grey-border-color;
     }
 
     &__cards-list {
@@ -27,4 +27,14 @@
         height: 0;
         border: 1px solid $white;
     }
+}
+
+.genres-control {
+    display: flex;
+    align-items: center;
+}
+
+.genres-control__btn {
+    margin-left: 10px;
+    flex: none;
 }

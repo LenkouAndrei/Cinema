@@ -52,6 +52,8 @@ export function Main(props: IMainProps): JSX.Element {
             })
     }, []);
 
+    const [genresVisible, setGenresVisible] = useState(false);
+
 
     const initGreatestId: number = defaultMovies.reduce(
         (accum: number, curr: IMovie) => {
@@ -254,13 +256,23 @@ export function Main(props: IMainProps): JSX.Element {
         <Wrapper>
             <>
                 <section className={`${blockName}__filter`}>
-                    <ResultFilter
-                        onGenreClick={setCurrentGenre}
-                        { ...moviesGenresConfig }/>
+                    <div className="genres-control">
+                        <span>Genre: {moviesGenresConfig.currentGenre.name}</span>
+                        <button
+                            className="genres-control__btn search__btn"
+                            onClick={() => setGenresVisible(!genresVisible)}>
+                                {genresVisible ? 'Hide' : 'Show'} genres
+                            </button>
+                    </div>
                     <ResultSort
                         onSortClick={updateMoviesSortConfig}
                         {...moviesSortConfig}/>
                 </section>
+                { genresVisible && <section className={`${blockName}__filter`}>
+                    <ResultFilter
+                            onGenreClick={setCurrentGenre}
+                            { ...moviesGenresConfig }/>
+                </section> }
                 <div className={`${blockName}__amount`}>
                     <strong className='strong'>{moviesAmt}</strong> movies found
                 </div>
