@@ -28,7 +28,7 @@ export const AuthorizationPage = () => {
         sessionStorage.setItem('userId', userId);
     }
 
-    const submitAuthorization = (event: any) => {
+    const signIn = (event: any) => {
         event.preventDefault();
         event.stopPropagation();
         const isDataValid = validateForm(credentials);
@@ -43,7 +43,12 @@ export const AuthorizationPage = () => {
 
     const writeCredential = (field: 'email' | 'password') => (event: any) => {
         credentials[field] = event.target.value;
-    }
+    };
+
+    const enterAsAGuest = () => {
+        setSessionUser(USER_TYPE.GUEST, null);
+        navigate("movies");
+    };
 
     return <>
         <Wrapper>
@@ -68,13 +73,13 @@ export const AuthorizationPage = () => {
                         </label>
                         <button
                             className="authorization__submit-btn search__btn"
-                            onClick={submitAuthorization}>Submit</button>
+                            onClick={signIn}>Sign in</button>
                     </form>
                     <div className="authorization__standalone standalone">
                         <div className="standalone__separator"/>
                         <button
                             className="standalone__escape-btn search__btn"
-                            onClick={() => setSessionUser(USER_TYPE.GUEST, null)}>Enter as a guest</button>
+                            onClick={enterAsAGuest}>Enter as a guest</button>
                     </div>
                 </div>
             </div>

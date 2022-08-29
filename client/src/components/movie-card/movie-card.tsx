@@ -54,6 +54,10 @@ export function MovieCard({ movie, onClickMovie }: IMovieCardProps): JSX.Element
         }
     }
 
+    const isAuthorized = () => {
+        return sessionStorage.getItem('userType') !== 'guest';
+    }
+
     const menuListItems: JSX.Element[] = getMenuItems().map((itemTitle: string) => {
         return <li
             key={itemTitle}
@@ -94,7 +98,7 @@ export function MovieCard({ movie, onClickMovie }: IMovieCardProps): JSX.Element
             <span className={`${blockName}__title`}>{movie.title}</span>
             <span className={`${blockName}__release-date`}>{movie.release_date}</span>
             <span className={`${blockName}__genres`}>{movie.genres.join(', ')}</span>
-            { onClickMovie && <div
+            { onClickMovie && isAuthorized() && <div
                 className={`${blockName}__settings`}>
                     { isEditMenuVisible ? menu : icon }
             </div> }
