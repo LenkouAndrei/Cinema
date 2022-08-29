@@ -241,53 +241,59 @@ export function Main(props: IMainProps): JSX.Element {
         });
 
     return <main className={`${blockName} main`}>
-        <Modal isOpen={isFormDialogOpen} handleClose={hideModal}>
-            <FormPage onSaveChanges={updateMoviesSet} movie={ movieToEdit }/>
-        </Modal>
-        <Modal isOpen={isDeleteDialogOpen} handleClose={hideModal}>
-            <DeleteModal onDeleteConfirm={deleteMovie} title={movieToEdit.title}/>
-        </Modal>
-        <Wrapper>
-            { props.areDetailsVisible && movieWithDetails ?
-                <Details { ...movieWithDetails }/>
-                : <Search handleSearch={findByText} handleSearchTextChange={changeSearchText}/> }
-        </Wrapper>
-        <div className={`${blockName}__separator`} />
-        <Wrapper>
-            <>
-                <section className={`${blockName}__filter`}>
-                    <div className="genres-control">
-                        <span>Genre: {moviesGenresConfig.currentGenre.name}</span>
-                        <button
-                            className="genres-control__btn search__btn"
-                            onClick={() => setGenresVisible(!genresVisible)}>
-                                {genresVisible ? 'Hide' : 'Show'} genres
-                            </button>
-                    </div>
-                    <ResultSort
-                        onSortClick={updateMoviesSortConfig}
-                        {...moviesSortConfig}/>
-                </section>
-                { genresVisible && <section className={`${blockName}__filter`}>
-                    <ResultFilter
-                            onGenreClick={setCurrentGenre}
-                            { ...moviesGenresConfig }/>
-                </section> }
-                <section>
-                    <div className={`${blockName}__amount`}>
-                        <strong className='strong'>{moviesAmt}</strong> movies found
-                    </div>
-                    <ul className={`${blockName}__cards-list`}>
-                        {moviesCards}
-                    </ul>
-                </section>
-                    <Pagination
-                        onPageChange={handlePaginationClick}
-                        totalCount={moviesAmt}
-                        pageSize={limitPerPage}
-                        siblingCount={1}
-                        currentPage={pageNum}/>
-            </>
-        </Wrapper>
+            <Modal isOpen={isFormDialogOpen} handleClose={hideModal}>
+                <FormPage onSaveChanges={updateMoviesSet} movie={ movieToEdit }/>
+            </Modal>
+            <Modal isOpen={isDeleteDialogOpen} handleClose={hideModal}>
+                <DeleteModal onDeleteConfirm={deleteMovie} title={movieToEdit.title}/>
+            </Modal>
+            <Wrapper>
+                { props.areDetailsVisible && movieWithDetails ?
+                    <Details { ...movieWithDetails }/>
+                    : <Search handleSearch={findByText} handleSearchTextChange={changeSearchText}/> }
+            </Wrapper>
+            <div className={`${blockName}__separator`} />
+            <Wrapper>
+                <>
+                    <section className={`${blockName}__filter`}>
+                        <div className="genres-control">
+                            <span>Genre: {moviesGenresConfig.currentGenre.name}</span>
+                            <button
+                                className="genres-control__btn search__btn"
+                                onClick={() => setGenresVisible(!genresVisible)}>
+                                    {genresVisible ? 'Hide' : 'Show'} genres
+                                </button>
+                        </div>
+                        <ResultSort
+                            onSortClick={updateMoviesSortConfig}
+                            {...moviesSortConfig}/>
+                    </section>
+                    { genresVisible && <section className={`${blockName}__filter`}>
+                        <ResultFilter
+                                onGenreClick={setCurrentGenre}
+                                { ...moviesGenresConfig }/>
+                    </section> }
+                </>
+            </Wrapper>
+            <div className={`${blockName}__content`}>
+                <Wrapper>
+                    <section>
+                        <div className={`${blockName}__amount`}>
+                            <strong className='strong'>{moviesAmt}</strong> movies found
+                        </div>
+                        <ul className={`${blockName}__cards-list`}>
+                            {moviesCards}
+                        </ul>
+                    </section>
+                </Wrapper>
+            </div>
+            <Wrapper>
+                <Pagination
+                    onPageChange={handlePaginationClick}
+                    totalCount={moviesAmt}
+                    pageSize={limitPerPage}
+                    siblingCount={1}
+                    currentPage={pageNum}/>
+            </Wrapper>
     </main>;
 }

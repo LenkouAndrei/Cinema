@@ -64,6 +64,19 @@ html, body, #root {
   
 	.main {
 		flex: 1;
-		overflow: auto;
+		overflow-y: auto;
 	}
+}
+
+*::-webkit-scrollbar {
+	width: 5px;
+}
+
+*::-webkit-scrollbar-track {
+	box-shadow: inset 0 0 6px #adb0b7;
+}
+
+*::-webkit-scrollbar-thumb {
+	background-color: #FA8072;
+	outline: 1px solid #FA8072;
 }
