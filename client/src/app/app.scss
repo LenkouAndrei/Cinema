@@ -73,10 +73,10 @@ html, body, #root {
 }
 
 *::-webkit-scrollbar-track {
-	box-shadow: inset 0 0 6px #adb0b7;
+	box-shadow: inset 0 0 6px $white-opacity-3;
 }
 
 *::-webkit-scrollbar-thumb {
-	background-color: #FA8072;
-	outline: 1px solid #FA8072;
+	background-color: $solmon;
+	outline: 1px solid $solmon;
 }
