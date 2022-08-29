@@ -1,6 +1,6 @@
 import React, { MouseEvent, useCallback, useEffect, useState, ChangeEvent } from 'react';
 import { FormPage, Modal, Wrapper } from '../';
-import { DeleteModal, Details, MovieCard, ResultFilter, ResultSort, Search, Pagination } from '../../components';
+import { DeleteModal, MovieCard, ResultFilter, ResultSort, Search, Pagination } from '../../components';
 import {
     IMovie,
     ISelectConfig,
@@ -21,8 +21,6 @@ let searchText = '';
 
 interface IMainProps {
     movieToAdd: TNullable<IMovie>;
-    areDetailsVisible: boolean;
-    onChangePage: () => void;
 }
 
 type TVoidWithNoArgs = () => void;
@@ -221,7 +219,6 @@ export function Main(props: IMainProps): JSX.Element {
 
     const changeSearchText = (event: ChangeEvent<HTMLInputElement>) => {
         searchText = event.target.value;
-        console.log(searchText);
     }
 
     const { currentGenre } = moviesGenresConfig;
