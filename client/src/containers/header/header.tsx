@@ -28,6 +28,11 @@ export function Header({ pageName, onAddBtnClick, onSearchBtnClick }: IHeaderPro
     let userType: string;
     const [ isDialogOpen, setIsDialogOpen ] = useState(false);
 
+    const preventAndStop = (event: any) => {
+        event.preventDefault();
+        event.stopPropagation();
+    };
+
     useEffect(() => {
         userType = sessionStorage.getItem('userType');
     }, []);
@@ -60,11 +65,18 @@ export function Header({ pageName, onAddBtnClick, onSearchBtnClick }: IHeaderPro
                 className={'add-btn'}
                 onClick={showModal}>+ Add Movie</button>;
             case 'subscriber':
-                return <Link to="/favorites">
-                    <button className={'search__btn favorite-btn'}>Favorite</button>
+                return <Link to="/favorites" className="search__btn link">
+                    Favorite
                 </Link>;
     }
     };
+
+    const logout = (event: any) => {
+        preventAndStop(event);
+        navigate("/");
+        sessionStorage.removeItem('userType');
+        sessionStorage.removeItem('userId');
+    }
 
     const getHeaderElement: () => TNullable<JSX.Element> = () => {
         switch (pageName) {
@@ -94,6 +106,9 @@ export function Header({ pageName, onAddBtnClick, onSearchBtnClick }: IHeaderPro
                 <section className={`${blockName}__top`}>
                     <Logo/>
                     { getHeaderElement() }
+                    <button
+                        className="search__btn"
+                        onClick={logout}>Logout</button>
                 </section>
             </>
         </Wrapper>
