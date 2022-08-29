@@ -8,3 +8,4 @@ export * from './delete-modal/delete-modal';
 export * from './details/details';
 export * from './pagination/pagination';
 export * from './favorite-list/favorite-list';
+export * from './details-container/details-container';

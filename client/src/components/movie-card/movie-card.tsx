@@ -10,7 +10,7 @@ const blockName = 'movie';
 
 interface IMovieCardProps {
     movie: IMovie;
-    onClickMovie: (modalDialogType: string) => void;
+    onClickMovie?: (modalDialogType: string) => void;
 }
 
 const preventAndStop = (event: any) => {
@@ -36,7 +36,9 @@ export function MovieCard({ movie, onClickMovie }: IMovieCardProps): JSX.Element
 
     const handleMenuListItemClick = (itemTitle: string) => (event: any) => {
       preventAndStop(event);
-      onClickMovie(itemTitle);
+      if (onClickMovie) {
+        onClickMovie(itemTitle);
+      }
       setIsEditMenuVisible(false);
     };
     
@@ -92,10 +94,10 @@ export function MovieCard({ movie, onClickMovie }: IMovieCardProps): JSX.Element
             <span className={`${blockName}__title`}>{movie.title}</span>
             <span className={`${blockName}__release-date`}>{movie.release_date}</span>
             <span className={`${blockName}__genres`}>{movie.genres.join(', ')}</span>
-            <div
+            { onClickMovie && <div
                 className={`${blockName}__settings`}>
                     { isEditMenuVisible ? menu : icon }
-            </div>
+            </div> }
         </figcaption>
     </figure>;
 }

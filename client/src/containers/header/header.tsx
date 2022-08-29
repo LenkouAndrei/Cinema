@@ -6,7 +6,7 @@ import { faSearch } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import './header.scss';
 import { movieService } from '../../services/movie.service';
-import { useNavigate, Link } from "react-router-dom";
+import { useNavigate, Link, createSearchParams } from "react-router-dom";
 
 export interface IHeaderProps {
     pageName?: PageName;
@@ -95,10 +95,18 @@ export function Header({ pageName, onAddBtnClick, onSearchBtnClick }: IHeaderPro
                 className={`${blockName}__icon`}
                 icon={faSearch}/>
             </button>;
-            default:
-                return null;
+        default:
+            return null;
         }
     };
+
+    const testTest = () =>
+    navigate({
+        pathname: "/details",
+        search: createSearchParams({
+            foo: "bar"
+        }).toString()
+    });
 
     return <header className={blockName}>
         <Wrapper>
@@ -106,6 +114,7 @@ export function Header({ pageName, onAddBtnClick, onSearchBtnClick }: IHeaderPro
                 <section className={`${blockName}__top`}>
                     <Logo/>
                     { getHeaderElement() }
+                    <button onClick={testTest}>Test</button>
                     <button
                         className="search__btn"
                         onClick={logout}>Logout</button>

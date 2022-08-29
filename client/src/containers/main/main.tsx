@@ -13,6 +13,7 @@ import { moviesSortList } from './mockMoviesSortList';
 import { movieService } from '../../services/movie.service';
 import { genresService } from '../../services/genres.service';
 import { favoritesService } from '../../services/favorites.service';
+import { useNavigate, createSearchParams } from "react-router-dom";
 
 const defaultMovies: IMovie[] = require('../../data.json');
 const blockName = 'result';
@@ -41,6 +42,7 @@ let pageNum = 1;
 const limitPerPage = 5;
 
 export function Main(props: IMainProps): JSX.Element {
+    const navigate = useNavigate();
     useEffect(() => {
         genresService.getGenres()
             .then(responseGenres => {
@@ -53,14 +55,6 @@ export function Main(props: IMainProps): JSX.Element {
     }, []);
 
     const [genresVisible, setGenresVisible] = useState(false);
-
-
-    const initGreatestId: number = defaultMovies.reduce(
-        (accum: number, curr: IMovie) => {
-            return curr.id > accum ? curr.id : accum;
-        },
-        0
-    );
 
     if ( props.movieToAdd ) {
         defaultMovies.push(props.movieToAdd);
@@ -79,7 +73,6 @@ export function Main(props: IMainProps): JSX.Element {
         genres: [defaultGenre],
         currentGenre: defaultGenre
     });
-    const [ movieWithDetails, setMovieWithDetails ] = useState(null);
 
     const setMoviesData = ({ movies, moviesAmount }: { movies: IMovie[], moviesAmount: number }) => {
         setMovies(movies);
@@ -203,11 +196,16 @@ export function Main(props: IMainProps): JSX.Element {
             .then(() => hideModal());
     };
 
-    const showDetails = (movie: IMovie) => (event: MouseEvent) => {
-        movieService.getMovieById(movie._id)
-            .then(setMovieWithDetails)
-            .then(() => props.onChangePage());
-    };
+    const navigateToDetails = (id: string) => (event: MouseEvent) => {
+        navigate({
+            pathname: "/details",
+            search: createSearchParams({
+                id,
+                genreId: JSON.stringify(moviesGenresConfig.currentGenre.id),
+                sortFieldUI: moviesSortConfig.chosenOption
+            }).toString()
+        })
+    }
 
     const findByText = (inputEl: HTMLInputElement) => {
         return (_event: MouseEvent) => {
@@ -234,8 +232,8 @@ export function Main(props: IMainProps): JSX.Element {
         }).map((movie: IMovie) => {
             return <li
                 className={`${blockName}__movies-card`}
-                key={movie.id}
-                onClick={showDetails(movie)}>
+                key={movie._id}
+                onClick={navigateToDetails(movie._id.toString())}>
                 <MovieCard onClickMovie={handleMovieToEditChange(movie._id)} movie={movie}/>
             </li>;
         });
@@ -248,9 +246,7 @@ export function Main(props: IMainProps): JSX.Element {
                 <DeleteModal onDeleteConfirm={deleteMovie} title={movieToEdit.title}/>
             </Modal>
             <Wrapper>
-                { props.areDetailsVisible && movieWithDetails ?
-                    <Details { ...movieWithDetails }/>
-                    : <Search handleSearch={findByText} handleSearchTextChange={changeSearchText}/> }
+                <Search handleSearch={findByText} handleSearchTextChange={changeSearchText}/>
             </Wrapper>
             <div className={`${blockName}__separator`} />
             <Wrapper>
